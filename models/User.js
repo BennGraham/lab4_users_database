@@ -1,6 +1,62 @@
 const mongoose = require("mongoose");
 
+const locationSchema = new mongoose.Schema({
+  lat: String,
+  long: String,
+});
+
+const addressSchema = new mongoose.Schema({
+  street: {
+    type: String,
+    required: true,
+  },
+  suite: {
+    type: String,
+    required: true,
+  },
+  city: {
+    type: String,
+    required: true,
+    validate: {
+      validator: function (v) {
+        return /^[A-Za-z\s]+$/.test(v);
+      },
+      message: "City name can only contain alphanumeric characters and spaces",
+    },
+  },
+  zipcode: {
+    type: String,
+    required: true,
+    validate: {
+      validator: function (v) {
+        return /^\d{5}-\d{4}$/.test(v);
+      },
+      message: "Zipcode must be in format DDDDD-DDDD",
+    },
+  },
+  geo: locationSchema,
+});
+
+const companySchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  catchPhrase: {
+    type: String,
+    required: true,
+  },
+  bs: {
+    type: String,
+    required: true,
+  },
+});
+
 const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
   username: {
     type: String,
     required: true,
@@ -16,45 +72,33 @@ const userSchema = new mongoose.Schema({
       message: "Please enter a valid email address",
     },
   },
-  city: {
+  address: {
+    type: addressSchema,
+    required: true,
+  },
+  phone: {
     type: String,
     required: true,
     validate: {
-      validator: function (city) {
-        return /^[A-Za-z\s]+$/.test(city);
+      validator: function (v) {
+        return /^\d-\d{3}-\d{3}-\d{4}$/.test(v);
       },
-      message: "City name may only contain alphanumeric characters and spaces",
+      message: "Phone must be in format D-DDD-DDD-DDDD",
     },
   },
   website: {
     type: String,
     required: true,
     validate: {
-      validator: function (website) {
-        return /^https?:\/\/.+\..+/.test(website);
+      validator: function (v) {
+        return /^https?:\/\/.+\..+/.test(v);
       },
       message: "Please enter a valid URL (http or https)",
     },
   },
-  zipCode: {
-    type: String,
+  company: {
+    type: companySchema,
     required: true,
-    validate: {
-      validator: function (zip) {
-        return /^\d{5}-\d{4}$/.test(zip);
-      },
-      message: "Zip code must be in format DDDDD-DDDD",
-    },
-  },
-  phone: {
-    type: String,
-    required: true,
-    validate: {
-      validator: function (phone) {
-        return /^\d-\d{3}-\d{3}-\d{4}$/.test(phone);
-      },
-      message: "Phone must be in format D-DDD-DDD-DDDD",
-    },
   },
 });
 
